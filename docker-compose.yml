@@ -1,0 +1,41 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:1.21.6
+    container_name: easyweb-nginx
+    restart: unless-stopped
+    depends_on:
+      - php
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./www:/mnt/www
+      - ./logs:/mnt/logs
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/mnt/certbot/conf
+      - ./certbot/www:/mnt/certbot/www
+    networks:
+      - easyweb-net
+  php:
+    image: php:8
+    container_name: easyweb-php
+    restart: unless-stopped
+    volumes:
+      - ./www:/mnt/www
+      - ./logs:/mnt/logs
+    networks:
+      - easyweb-net
+  certbot:
+    image: certbot/certbot:v1.27.0
+    container_name: easyweb-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    networks:
+      - easyweb-net
+networks:
+  easyweb-net:
+    driver: bridge
+    ipam:
+      driver: default
