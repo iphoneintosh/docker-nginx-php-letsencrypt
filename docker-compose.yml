@@ -18,7 +18,7 @@ services:
     networks:
       - easyweb-net
   php:
-    image: php:8
+    image: php:8-fpm
     container_name: easyweb-php
     restart: unless-stopped
     volumes:
